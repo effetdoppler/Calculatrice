@@ -2,12 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gtk/gtk.h>
-#include "parse.h"
+#include "../lib/parser2.h"
 
 long long a = 0;
 long long b;
-long long resultat;
-long long stockage;
 char Buffer[100];
 char res[100];
 int last;
@@ -155,8 +153,6 @@ void ButtonDivide()
 
 void ButtonReset()
 {
-	stockage = resultat;
-	resultat = 0;
 	a = 0;
 	b = 0;
 	Buffer[0] = '\0';
@@ -195,12 +191,15 @@ void ButtonL_P()
 
 void ButtonEqual()
 {
-	resultat = parse_char(Buffer);
-	sprintf(res, "%lld", resultat);
+	printf("%s\n", Buffer);
+	Result resultat = calculate_char(Buffer);
+	if (resultat.err == NULL)
+		sprintf(res, "%.6g", resultat.value);
+	else
+	    sprintf(res, "%s", resultat.err);
 	gtk_label_set_text(mylabel,res);
 
 	Buffer[0] = '\0';
 	a = 0;
 	b = 0;
-	resultat;
 }
