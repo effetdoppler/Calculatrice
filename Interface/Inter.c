@@ -237,7 +237,8 @@ void Buttonln()
 
 void Buttonpi()
 {
-	last = 'π';
+	char pi[] = "π";
+	last = pi[0];
 	strcat(Buffer,"π");
 	gtk_label_set_text(mylabel,Buffer);
 }
@@ -308,10 +309,9 @@ void ButtonOperation()
 
 void ButtonEqual()
 {
-	printf("%s\n", Buffer);
 	Result resultat = calculate_char(Buffer);
 	if (resultat.err == NULL)
-		sprintf(res, "%.6g", resultat.value);
+		sprintf(res, "%.16g", resultat.value);
 	else
 	    sprintf(res, "%s", resultat.err);
 

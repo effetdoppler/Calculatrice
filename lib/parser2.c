@@ -9,11 +9,12 @@
 #define VALID_TOKENS "+-*/0123456789()"
 #define OPERATOR "+-*/^"
 #define NUMBER "0123456789.,"
-#define SPECIALNUMBER "π"
 #define SEPARATOR "()"
 #define SPECIALTERM "ecslt"
 
 #define MAX_INPUT_SIZE 100
+
+static char SPECIALNUMBER[] = "π";
 
 //static const char* global_error = NULL;
 static Result result;
@@ -117,10 +118,12 @@ Token* tokenize(const char* in, int* nbTokens) {
             tokens[token_pos++] = *tok;
         }
         // Check if input character is a valid token
-        else if (strchr(SPECIALNUMBER, in[i]))
+        else if (i+1 < in_len && SPECIALNUMBER[0] == in[i] && SPECIALNUMBER[1] == in[i+1])
         {
             tok->type = Number;
-            tok->value = "3.14159265358979323846";
+            char* pi = malloc(sizeof(char)*22);
+            sprintf(pi, "%.19f", M_PI);
+            tok->value = pi;
             tokens[token_pos++] = *tok;
             i = i+2;
         }
