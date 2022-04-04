@@ -11,7 +11,7 @@
 #define NUMBER "0123456789.,"
 #define SPECIALNUMBER "π"
 #define SEPARATOR "()"
-#define SPECIALTERM "ecsl"
+#define SPECIALTERM "ecslt"
 
 #define MAX_INPUT_SIZE 100
 
@@ -140,7 +140,8 @@ Token* tokenize(const char* in, int* nbTokens) {
                 if ( strcmp(func, "cos") != 0 &&
                         strcmp(func, "sin") != 0 &&
                         strcmp(func, "exp") != 0 &&
-                        strcmp(func, "log") != 0)
+                        strcmp(func, "tan") != 0 &&
+                        strcmp(func, "ln") != 0)
                 {
                     result.err = "invalid function";
                     free(func);
@@ -262,6 +263,8 @@ double calculate(exprtree* expr) {
         return exp(right);  
     else if (expr->type == 'l')
         return log(right);  
+    else if (expr->type == 't')
+        return tan(right);  
 
     return 0;
 }
@@ -369,7 +372,8 @@ exprtree* parse_atomic_expression(parser_t* parser) {
 
     exprtree* expr = NULL;
     char specialterm = 0;
-    if (parser->pos < parser->ntokens && (*parser->tokens[parser->pos].value == 'c' || *parser->tokens[parser->pos].value == 's' || *parser->tokens[parser->pos].value == 'e' || *parser->tokens[parser->pos].value == 'l'))
+    if (parser->pos < parser->ntokens && (*parser->tokens[parser->pos].value == 'c' || *parser->tokens[parser->pos].value == 's' || *parser->tokens[parser->pos].value == 'e' || *parser->tokens[parser->pos].value == 'l'
+    || *parser->tokens[parser->pos].value == 't'))
     {
         specialterm = *parser->tokens[parser->pos].value;
         parser->pos++;
