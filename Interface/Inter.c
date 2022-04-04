@@ -309,20 +309,13 @@ void ButtonOperation()
 void ButtonEqual()
 {
 	printf("%s\n", Buffer);
-	double a = parse_char(Buffer);
-	double b = parse_char("3,3");
-	printf ("%.6g\n", a);
-	printf ("%.6g\n", b);
 	Result resultat = calculate_char(Buffer);
-	printf("%f\n",resultat.value);
 	if (resultat.err == NULL)
 		sprintf(res, "%.6g", resultat.value);
 	else
 	    sprintf(res, "%s", resultat.err);
 
 
-	printf("%f\n",resultat.value);
-	printf("%s\n",res);
 
 	gtk_label_set_text(mylabel,res);
 
