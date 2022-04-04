@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gtk/gtk.h>
+#include <locale.h>
 #include "../lib/parser2.h"
 
 long long a = 0;
@@ -30,6 +31,14 @@ int main(int argc, char * argv[])
 
 	gtk_builder_connect_signals(builder,NULL);
 	g_object_unref(builder);
+
+	struct lconv * lc =localeconv();
+	if (strlen(lc->decimal_point) != 1 || (*lc->decimal_point != '.' && *lc->decimal_point != ','))
+	{
+		printf("The decimal point of the locale must be either . or ,\n");
+		exit(1);
+	}
+	SetDecimalPoint(*lc->decimal_point);
 
 	gtk_widget_show(window);
 	gtk_main();

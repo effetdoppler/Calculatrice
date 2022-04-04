@@ -22,4 +22,5 @@ typedef struct Result {
 Token* tokenize(const char*, int* nb);
 double parse_char(const char* input);
 Result calculate_char(const char* input);
+void SetDecimalPoint(char p);
 #endif // #define PARSER2_H

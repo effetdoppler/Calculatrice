@@ -18,6 +18,8 @@
 //static const char* global_error = NULL;
 static Result result;
 
+static char DECIMAL_POINT = '.';
+
 // Create parser structure to keep track of the tokens consumed
 typedef struct parser_t {
     Token* tokens;
@@ -34,7 +36,6 @@ typedef struct exprtree {
     struct exprtree* right;
 } exprtree;
 
-
 // Helper parsing functions
 
 exprtree* parse(Token* tokens, int nbtok);
@@ -45,6 +46,10 @@ exprtree* parse_mult_expression(parser_t* parser);
 exprtree* parse_power_expression(parser_t* parser);
 exprtree* parse_atomic_expression(parser_t* parser);
 
+void SetDecimalPoint(char p)
+{
+    DECIMAL_POINT = p;
+}
 
 size_t test_operator(const char* in, size_t ind)
 {
@@ -98,8 +103,8 @@ Token* tokenize(const char* in, int* nbTokens) {
             while(start < i){
                 if (in[start] != ' ')
                 {
-                    if (in[start] == ',')
-                        number[ind] = '.';
+                    if (in[start] == ',' || in[start] == '.')
+                        number[ind] = DECIMAL_POINT;
                     else if (in[start] != ' ')
                         number[ind] = in[start];
                     ind++;
