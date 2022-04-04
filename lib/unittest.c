@@ -156,6 +156,7 @@ int main()
     Testparser("-2^5", -pow(2, 5));
     Testparser("cos(π)", cos(M_PI));
     Testparser("sin(π)", sin(M_PI));
+    Testparser("tan(π)", tan(M_PI));
     Testparser("log(1)", log(1));
     Testparser("cos(98)", cos(98));
     Testparser("exp(log(2))", exp(log(2)));
