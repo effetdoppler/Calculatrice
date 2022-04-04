@@ -231,7 +231,7 @@ void Buttonexp()
 void Buttonln()
 {
 	last = 'l';
-	strcat(Buffer,"log(");
+	strcat(Buffer,"ln(");
 	gtk_label_set_text(mylabel,Buffer);
 }
 
