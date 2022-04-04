@@ -11,7 +11,10 @@ char res[100];
 int last;
 
 GtkWidget *window;
+GtkWidget *windowFunction;
 GtkLabel *mylabel;
+
+int windowfun_open = 0;
 
 int main(int argc, char * argv[])
 {
@@ -23,16 +26,48 @@ int main(int argc, char * argv[])
 
 	window = GTK_WIDGET(gtk_builder_get_object(builder,"Interface"));
 	mylabel = GTK_LABEL(gtk_builder_get_object(builder,"Resultat"));
+	windowFunction = GTK_WIDGET(gtk_builder_get_object(builder,"Fonction"));
 
 	gtk_builder_connect_signals(builder,NULL);
 	g_object_unref(builder);
 
-	gtk_widget_show_all(window);
+	gtk_widget_show(window);
 	gtk_main();
 
-	return 0;
-
 }
+
+
+void suppression()
+{
+	
+	char *lastchar;
+
+	lastchar = strrchr(Buffer,last);
+
+	if (lastchar != NULL)
+	{
+		//if (last > '0' && last < '9')
+		//{
+			*lastchar = '\0';
+			lastchar--;
+			
+		//}
+		/*else
+		{
+			int c = 3;
+			while (c > 0)
+			{
+				last = ' ';
+				lastchar = strrchr(Buffer,last);
+				*lastchar = '\0';
+				lastchar--;
+				c--;
+			}
+		}*/
+		last = *lastchar;
+	}
+}
+
 
 void exit_app()
 {
@@ -41,13 +76,10 @@ void exit_app()
 
 void Button0()
 {
-	if (a != 0)
-	{
-		last = '0';
-		//a *= 10;
-		strcat(Buffer,"0");
-		gtk_label_set_text(mylabel,Buffer);
-	}
+	last = '0';
+	//a *= 10;
+	strcat(Buffer,"0");
+	gtk_label_set_text(mylabel,Buffer);
 }
 
 void Button1()
@@ -118,7 +150,7 @@ void Button8()
 void Button9()
 {
 	last = '9';
-	a = a*10 + 9;
+	//a = a*10 + 9;
 	strcat(Buffer,"9");
 	gtk_label_set_text(mylabel,Buffer);
 }
@@ -159,20 +191,80 @@ void ButtonReset()
 	gtk_label_set_text(mylabel,Buffer);
 }
 
-void ButtonReturn()
+void Buttoncos()
 {
-	char *lastchar;
-	if (last != 10)
-	{
-		lastchar = strrchr(Buffer,last);
-	}
-	*lastchar = '\0';
-	lastchar--;
-	last = 10;
-
+	last = 'c';
+	strcat(Buffer,"cos(");
 	gtk_label_set_text(mylabel,Buffer);
 }
 
+void Buttonsin()
+{
+	last = 's';
+	strcat(Buffer,"sin(");
+	gtk_label_set_text(mylabel,Buffer);
+}
+
+void buttonpow()
+{
+	last = '^';
+	strcat(Buffer,"^");
+	gtk_label_set_text(mylabel,Buffer);
+}
+
+void Buttonexp()
+{
+	last = 'e';
+	strcat(Buffer,"exp(");
+	gtk_label_set_text(mylabel,Buffer);
+}
+
+void Buttonln()
+{
+	last = 'l';
+	strcat(Buffer,"log(");
+	gtk_label_set_text(mylabel,Buffer);
+}
+
+void Buttonpi()
+{
+	last = 'π';
+	strcat(Buffer,"π");
+	gtk_label_set_text(mylabel,Buffer);
+}
+
+void Buttonpow()
+{
+	last = '^';
+	strcat(Buffer,"^");
+	gtk_label_set_text(mylabel,Buffer);
+}
+
+void Buttonvirgule()
+{
+	last = ',';
+	strcat(Buffer,",");
+	gtk_label_set_text(mylabel,Buffer);
+}
+
+void ButtonReturn()
+{
+	char *lastchar;
+
+	if (last == 'c' || last == 's' || last == 'e' || last == 'l')
+	{
+		last = '(';
+		for (int i = 0; i < 4; i++)
+			suppression();
+	}
+
+	else
+	{
+		suppression();
+	}
+
+	gtk_label_set_text(mylabel,Buffer);
+}
 	
 
 void ButtonR_P()
@@ -189,14 +281,40 @@ void ButtonL_P()
 	gtk_label_set_text(mylabel,Buffer);
 }
 
+void ButtonOperation()
+{
+
+	if (windowfun_open == 0)
+	{
+		gtk_widget_show(windowFunction);
+		windowfun_open = 1;
+	}
+	else
+	{
+		gtk_widget_hide(windowFunction);
+		windowfun_open = 0;
+	}
+}
+
+
 void ButtonEqual()
 {
 	printf("%s\n", Buffer);
+	double a = parse_char(Buffer);
+	double b = parse_char("3,3");
+	printf ("%.6g\n", a);
+	printf ("%.6g\n", b);
 	Result resultat = calculate_char(Buffer);
+	printf("%f\n",resultat.value);
 	if (resultat.err == NULL)
 		sprintf(res, "%.6g", resultat.value);
 	else
 	    sprintf(res, "%s", resultat.err);
+
+
+	printf("%f\n",resultat.value);
+	printf("%s\n",res);
+
 	gtk_label_set_text(mylabel,res);
 
 	Buffer[0] = '\0';
