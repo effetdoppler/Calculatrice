@@ -136,7 +136,7 @@ Token* tokenize(const char* in, int* nbTokens) {
                         strcmp(func, "sin") != 0 &&
                         strcmp(func, "exp") != 0 &&
                         strcmp(func, "tan") != 0 &&
-                        strcmp(func, "log") != 0)
+                        strcmp(func, "ln") != 0)
                 {
                     result.err = "invalid function";
                     free(func);

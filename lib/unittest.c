@@ -157,10 +157,10 @@ int main()
     Testparser("cos(π)", cos(M_PI));
     Testparser("sin(π)", sin(M_PI));
     Testparser("tan(π)", tan(M_PI));
-    Testparser("log(1)", log(1));
+    Testparser("ln(1)", log(1));
     Testparser("cos(98)", cos(98));
-    Testparser("exp(log(2))", exp(log(2)));
-    Testparser("3+2*exp(log(2))-6+(sin(3,2)+2*log(3))^(-2*2.5/3+π*2)", 3+2*exp(log(2))-6+pow(sin(3.2)+2*log(3), -2*2.5/3+M_PI*2));
+    Testparser("exp(ln(2))", exp(log(2)));
+    Testparser("3+2*exp(ln(2))-6+(sin(3,2)+2*ln(3))^(-2*2.5/3+π*2)", 3+2*exp(log(2))-6+pow(sin(3.2)+2*log(3), -2*2.5/3+M_PI*2));
     
     return 0;
 }
