@@ -242,6 +242,13 @@ void Buttonpi()
 	gtk_label_set_text(mylabel,Buffer);
 }
 
+void ButtonTan()
+{
+	last = 't';
+	strcat(Buffer,"tan(");
+	gtk_label_set_text(mylabel,Buffer);
+}
+
 void Buttonpow()
 {
 	last = '^';
@@ -260,10 +267,17 @@ void ButtonReturn()
 {
 	char *lastchar;
 
-	if (last == 'c' || last == 's' || last == 'e' || last == 'l')
+	if (last == 'c' || last == 's' || last == 'e' || last == 't')
 	{
 		last = '(';
 		for (int i = 0; i < 4; i++)
+			suppression();
+	}
+
+	else if (last == 'l')
+	{
+		last = '(';
+		for (int i = 0; i < 3; i++)
 			suppression();
 	}
 
