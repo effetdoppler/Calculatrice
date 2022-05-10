@@ -113,6 +113,26 @@ int Testparser(char* name, double expected)
         return 0;
     }
 }
+int Testparser_f(char* name, char* x, double expected)
+{
+    Result res = calculate_char_f(name, x);
+    if (res.err != NULL)
+    {
+        printf(ANSI_COLOR_RED "fail %s=%s (expected %.6g)" ANSI_COLOR_RESET "\n", name, res.err, expected);
+        return 0;
+    }
+    else if (fabs(res.value - expected) < 1.e-10)
+    {
+        printf(ANSI_COLOR_GREEN "pass %s" ANSI_COLOR_RESET "\n", name);
+        return 1;
+    }
+    else
+    {
+        printf(ANSI_COLOR_RED "fail %s=%.6g (expected %.6g)" ANSI_COLOR_RESET "\n", name, res.value, expected);
+        return 0;
+    }
+}
+
 
 
 int main() 
@@ -131,6 +151,10 @@ int main()
     TestTokenx("(33+3)*8/7-5", "(", "33", "+", "3", ")", "*", "8", "/", "7", "-", "5","");
     TestTokenx("(3.3+3)*8/7-5", "(", "3.3", "+", "3", ")", "*", "8", "/", "7", "-", "5","");
     printf("========parser=========\n");
+    Testparser_f("x+3", "33", 36);
+    Testparser_f("3*x","3", 9);
+    Testparser_f("3*x+10", "3", 19);
+    Testparser_f("3+2*exp(ln(x))-6+(sin(3,2)+x*ln(3))^(-x*2.5/3+π*x)", "2",3+2*exp(log(2))-6+pow(sin(3.2)+2*log(3), -2*2.5/3+M_PI*2));
     Testparser("3", 3);
     Testparser("-3", -3);
     Testparser("(3.23)", 3.23);

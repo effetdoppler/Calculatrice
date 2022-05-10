@@ -20,7 +20,12 @@ typedef struct Result {
 } Result;
 
 Token* tokenize(const char*, int* nb);
+Token* tokenize_f(const char* in, int* nbTokens, const char* x);
 double parse_char(const char* input);
 Result calculate_char(const char* input);
+Result calculate_char_f(const char* input, const char* x);
+double parse_char_f(const char* input, const char* x);
 void SetDecimalPoint(char p);
+
+
 #endif // #define PARSER2_H

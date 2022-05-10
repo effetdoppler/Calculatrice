@@ -9,6 +9,7 @@
 #define VALID_TOKENS "+-*/0123456789()"
 #define OPERATOR "+-*/^"
 #define NUMBER "0123456789.,"
+#define Inconnu "x"
 #define SEPARATOR "()"
 #define SPECIALTERM "ecslt"
 
@@ -203,7 +204,167 @@ Token* tokenize(const char* in, int* nbTokens) {
     return tokens;
 }
 
+Token* tokenize_f(const char* in, int* nbTokens, const char* x) {
 
+    // Allocate space for the tokens (each token is a character)
+    Token* tokens = malloc(sizeof(Token) * MAX_INPUT_SIZE);
+
+    int token_pos = 0; // token_pos will track the amount of tokens in the token string
+
+    // Iterate over the input string and everytime a token is found, add it to the tokens
+    size_t in_len = strlen(in);
+    size_t i = 0;
+    while (i < in_len)
+    {
+        if (in[i] == ' ')
+        {
+            i++;
+            continue;
+        }
+        // Check if input character is a valid token
+        Token *tok = malloc(sizeof(Token));
+        size_t start = i;
+        if (strchr(NUMBER, in[i]))
+        {
+            size_t wrong_number = 0;
+            // Add to number if it is
+            // We'll read the consecutive numbers into a character array, and then convert it to a number with atoi
+            while ((strchr(NUMBER, in[i]) || in[i] == ' ') && i-start < MAX_INPUT_SIZE && i < in_len) 
+            {
+                if(in[i] == '.' || in[i] == ',')
+                    wrong_number++;
+                i++;
+            }
+            if (wrong_number > 1)
+            {
+                 result.err = "not a number";                 
+                 return tokens;
+            }
+            //settup token
+            char *number = malloc((i-start+1)*sizeof(char));
+            size_t ind = 0;
+            while(start < i){
+                if (in[start] != ' ')
+                {
+                    if (in[start] == ',' || in[start] == '.')
+                        number[ind] = DECIMAL_POINT;
+                    else if (in[start] != ' ')
+                        number[ind] = in[start];
+                    ind++;
+                }
+                start++;
+            }
+            number[ind] = '\0';
+            tok->value = number;
+            tok->type = Number;
+            tokens[token_pos++] = *tok;
+        }
+        else if (i+1 < in_len && SPECIALNUMBER[0] == in[i] && SPECIALNUMBER[1] == in[i+1])
+        {
+            tok->type = Number;
+            char* pi = malloc(sizeof(char)*22);
+            sprintf(pi, "%.19f", M_PI);
+            tok->value = pi;
+            tokens[token_pos++] = *tok;
+            i = i+2;
+        }
+        // Check if input character is a valid token
+        else if (strchr((Inconnu), in[i]))
+        {
+            //settup token
+            char *number = malloc((strlen(x))*sizeof(char));
+            size_t ind = 0;
+            while(ind < strlen(x)){
+                if (x[ind] != ' ')
+                {
+                    if (x[ind] == ',' || x[ind] == '.')
+                        number[ind] = DECIMAL_POINT;
+                    else if (x[ind] != ' ')
+                        number[ind] = x[ind];
+                }
+                ind++;
+            }
+            number[ind] = '\0';
+            tok->value = number;
+            tok->type = Number;
+            tokens[token_pos++] = *tok;
+            i++;
+        }
+        else if (isalpha((int)in[i]))
+        {
+            if (strchr((SPECIALTERM), in[i]))
+            {
+                i++;
+                while (isalpha((int)in[i]) && i < in_len) 
+                {
+                    i++;
+                }
+                char* func = malloc(sizeof(char) * (i-start+1));
+                for (size_t x = start; x < i; x++)
+                    func[x-start] = in[x];
+                func[i-start] = '\0';
+                if ( strcmp(func, "cos") != 0 &&
+                        strcmp(func, "sin") != 0 &&
+                        strcmp(func, "exp") != 0 &&
+                        strcmp(func, "tan") != 0 &&
+                        strcmp(func, "ln") != 0)
+                {
+                    result.err = "invalid function";
+                    free(func);
+                    return tokens;                        
+                }
+                free(func);
+                if(i == in_len)
+                {
+                    result.err = "function must be followed by '('";
+                    return tokens;
+                }  
+                char *op = malloc((2)*sizeof(char));
+                op[0] = in[start];
+                op[1] = '\0';
+                tok->value = op;
+                tok->type = Specialterm;
+                tokens[token_pos++] = *tok;            
+            }
+            else
+            {
+                result.err = "invalid function";
+                return tokens;
+            }
+        }
+        else
+        {
+            if (strchr(OPERATOR, in[i]))
+            {
+                // Add to tokens if it is
+                if (test_operator(in, i) == 1)
+                {
+                    result.err = "two consecutive operators";
+                    return tokens;
+                }
+                if(test_operator(in, i) == 2)
+                {
+                    result.err = "no expression after an operator";
+                    return tokens;
+                }
+                tok->type = Operator;
+            }
+            else if (strchr(SEPARATOR, in[i]))
+                tok->type = Separator;
+            char *op = malloc((2)*sizeof(char));
+            op[0] = in[i];
+            op[1] = '\0';
+            tok->value = op;
+            tokens[token_pos++] = *tok;
+            i++;
+        }
+        free(tok);
+    }
+    // Terminate the tokens string with null
+
+    *nbTokens = token_pos;
+    return tokens;
+}
 static exprtree* create_exprtree(char type, double value, exprtree* left, exprtree* right) {
 
     // Allocate memory for the expression
@@ -508,5 +669,36 @@ Result calculate_char(const char* input)
 double parse_char(const char* input)
 {
     Result v = calculate_char(input);
+    return v.value;
+}
+
+Result calculate_char_f(const char* input, const char* x)
+{
+    // 2. Get tokens from the input string
+    int nbtoken;
+    result.value = nan("");
+    result.err = NULL;
+    Token* tokens = tokenize_f(input, &nbtoken, x);
+
+    // 3. Create expression tree from tokens
+    if (result.err == NULL)
+    {
+        exprtree* expression = parse(tokens, nbtoken);
+
+        // 4. Calculate the value of the expression
+        if (result.err == NULL)
+            result.value = calculate(expression);
+
+        // 6. Free the memory allocated for the expression
+        free_exprtree(expression);
+    }
+    free(tokens);
+
+    return result;
+}
+
+double parse_char_f(const char* input, const char* x)
+{
+    Result v = calculate_char_f(input, x);
     return v.value;
 }
